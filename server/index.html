@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sensor Data</title>
+    <style>
+        header {
+            background-color: #f8f9fa;
+            padding: 1em;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header id="sensor-data">Waiting for data...</header>
+
+    <script>
+        const socket = new WebSocket('ws://localhost:3000');
+
+        socket.onmessage = function (event) {
+            const sensorData = event.data;
+            document.getElementById('sensor-data').textContent = `Sensor Data: ${sensorData}`;
+        };
+    </script>
+</body>
+</html>
