@@ -1,7 +1,8 @@
-const express = require("express")
+const express = require('express');
 const http = require('http')
 const WebSocket = require('ws')
 const mqttClient = require('./mqttClient')
+const path = require('path');
 
 const app = express()
 const port = 3000
@@ -19,8 +20,12 @@ mqttClient.on('message', (topic, message) => {
   })
 })
 
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html')
+  res.render('index');
 })
 
 wss.on('connection', (ws) => {
