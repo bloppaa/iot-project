@@ -2,10 +2,6 @@ const int trigPin = 9;
 const int echoPin = 10;
 
 float distanceToGround;
-// Vehículo que supere este valor será considerado camión
-const int carThreshold = 10;
-
-int vehicleCount = 0;
 
 unsigned long lastDetectionTime = 0;
 const unsigned long detectionInterval = 1000;
@@ -15,15 +11,13 @@ bool vehicleDetected = false;
 float maxHeight = 0;
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
 
   // Fijar distancia al suelo inicial
   distanceToGround = measureDistance();
   delay(100);
-
-  Serial.println("Listo");
 }
 
 void loop() {
@@ -39,20 +33,14 @@ void loop() {
 
     if (!vehicleDetected) {
       vehicleDetected = true;
-      vehicleCount++;
     }
 
     lastDetectionTime = currentTime;
   } else if (vehicleDetected && currentTime - lastDetectionTime > detectionInterval) {
     vehicleDetected = false;
 
-    Serial.print("Altura: ");
-    Serial.print(maxHeight);
-    Serial.print("cm - ");
+    Serial.println(maxHeight);
     maxHeight = 0;
-
-    Serial.print("Cantidad vehículos: ");
-    Serial.println(vehicleCount);
   }
 
   delay(100);

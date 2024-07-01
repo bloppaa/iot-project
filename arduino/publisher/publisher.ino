@@ -67,8 +67,8 @@ void loop()
 
   if (Serial1.available()) {
     String string = Serial1.readStringUntil('\n');
-    char message[50];
-    string.toCharArray(message, 50);
+    char message[10];
+    string.toCharArray(message, 10);
 
     client.publish(topic, message);
     Serial.println(message);
