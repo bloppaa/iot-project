@@ -1,7 +1,8 @@
 const express = require('express');
-const http = require('http')
-const WebSocket = require('ws')
-const mqttClient = require('./mqttClient')
+const http = require('http');
+const WebSocket = require('ws');
+const { query } = require('./db');
+const mqttClient = require('./mqttClient');
 const path = require('path');
 
 const app = express()
@@ -20,12 +21,21 @@ mqttClient.on('message', (topic, message) => {
   })
 })
 
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
-  res.render('index');
+  res.sendFile(path.join(__dirname, 'public/index.html'));
+})
+
+app.get('/data', async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = 10;
+  const offset = (page - 1) * limit;
+  const result = await query(
+    'SELECT * FROM vehicle_heights ORDER BY timestamp DESC LIMIT $1 OFFSET $2',
+    [limit, offset],
+  );
+  res.json(result.rows);
 })
 
 wss.on('connection', (ws) => {

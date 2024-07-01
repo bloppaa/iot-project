@@ -1,6 +1,7 @@
 require('dotenv').config();
+const mqtt = require('mqtt');
+const { query } = require('./db');
 
-const mqtt = require('mqtt')
 const client = mqtt.connect({
   host: process.env.MQTT_HOST,
   port: process.env.MQTT_PORT,
@@ -16,5 +17,10 @@ client.on('connect', () => {
     }
   })
 });
+
+client.on('message', async (topic, message) => {
+  const height = parseFloat(message.toString());
+  await query('INSERT INTO vehicle_heights (height) VALUES ($1)', [height]);
+})
 
 module.exports = client;
