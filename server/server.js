@@ -12,8 +12,13 @@ const wss = new WebSocket.Server({ server })
 
 let latestMessage = ''
 
-mqttClient.on('message', (topic, message) => {
+mqttClient.on('message', async (topic, message) => {
   latestMessage = message.toString()
+  await query(
+    'INSERT INTO vehicle_heights (height) VALUES ($1)',
+    [parseFloat(latestMessage)],
+  );
+
   wss.clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
       client.send(latestMessage)
@@ -21,10 +26,12 @@ mqttClient.on('message', (topic, message) => {
   })
 })
 
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/index.html'));
+app.get('/', async (req, res) => {
+  res.render('index');
 })
 
 app.get('/data', async (req, res) => {

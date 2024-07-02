@@ -18,9 +18,4 @@ client.on('connect', () => {
   })
 });
 
-client.on('message', async (topic, message) => {
-  const height = parseFloat(message.toString());
-  await query('INSERT INTO vehicle_heights (height) VALUES ($1)', [height]);
-})
-
 module.exports = client;

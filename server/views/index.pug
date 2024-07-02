@@ -1,0 +1,37 @@
+doctype html
+head
+  meta(charset='UTF-8')
+  meta(name='viewport' content='width=device-width, initial-scale=1.0')
+  title Dashboard de Altura de Vehículos
+  link(href='./styles/style.css' rel='stylesheet')
+  script(src='https://cdn.jsdelivr.net/npm/chart.js')
+// Encabezado
+header.bg-blue-600.text-white.p-4
+  h1.text-3xl.font-bold Dashboard de Altura de Vehículos
+// Contenido Principal
+main.p-4
+  section.bg-white.p-6.rounded.shadow-md
+    h2.text-2xl.font-semibold.mb-4 Altura Actual del Vehículo
+    .flex.items-center.justify-center.mb-4
+      #currentHeight.text-6xl.font-bold.text-blue-600
+  section.bg-white.p-6.rounded.shadow-md.mt-6
+    h2.text-2xl.font-semibold.mb-4 Historial de Alturas
+    table.min-w-full.bg-white.mb-6
+      thead
+        tr
+          th.py-2.px-4.border-b Fecha
+          th.py-2.px-4.border-b Hora
+          th.py-2.px-4.border-b Altura
+      tbody#historyTable
+        // Las filas se agregarán dinámicamente
+    .pagination
+      button#prev.bg-blue-500.text-white.px-4.py-2.mr-2(class='disabled:bg-gray-500') Prev
+      button#next.bg-blue-500.text-white.px-4.py-2(class='disabled:bg-gray-500') Next
+    // Gráfico de línea
+    .bg-white.p-6.rounded.shadow-md.mt-6
+      h2.text-2xl.font-semibold.mb-4 Gráfico de Lecturas
+      canvas#lineChart
+// Pie de Página
+footer.bg-gray-800.text-white.p-4.mt-8.text-center
+  p &copy; 2024 Mi Proyecto Arduino. Todos los derechos reservados.
+script(src='./main.js')
