@@ -1,5 +1,10 @@
+#include <LiquidCrystal.h>
+
 const int trigPin = 9;
 const int echoPin = 10;
+
+const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 float distanceToGround;
 
@@ -11,6 +16,8 @@ void setup() {
   Serial.begin(115200);
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
+
+  lcd.begin(16, 2);
 
   // Fijar distancia al suelo inicial
   distanceToGround = measureDistance();
@@ -25,6 +32,11 @@ void loop() {
     maxHeight = vehicleHeight;
   } else if (vehicleHeight < 1 && previousHeight >= 1) {
     Serial.println(maxHeight);
+    
+    lcd.setCursor(0, 0);
+    lcd.print(maxHeight);
+    lcd.print(" cm");
+
     maxHeight = 0;
   }
 
