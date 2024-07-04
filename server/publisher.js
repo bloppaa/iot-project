@@ -22,6 +22,11 @@ parser.on('data', (data) => {
   const height = data.trim();
   client.publish(topic, height);
   console.log(`Altura publicada: ${height}`);
+
+  if (height >= 15) {
+    client.publish('danger', height);
+    console.log('Peligro publicado');
+  }
 });
 
 port.on('open', () => {
