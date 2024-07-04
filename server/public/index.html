@@ -3,26 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard de Altura de Vehículos</title>
+    <title>Dashboard</title>
     <link href="./styles/style.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gray-100 text-gray-900">
     <!-- Encabezado -->
     <header class="bg-blue-600 text-white p-4">
-        <h1 class="text-3xl font-bold">Dashboard de Altura de Vehículos</h1>
+        <h1 class="text-3xl font-bold">Skyguard | Puente La Garza</h1>
     </header>
 
     <!-- Contenido Principal -->
-    <main class="p-4">
-        <section class="bg-white p-6 rounded shadow-md">
+    <main class="p-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <!-- Altura Actual -->
+        <section class="bg-white p-6 rounded shadow-md flex flex-col justify-center">
             <h2 class="text-2xl font-semibold mb-4">Altura Actual del Vehículo</h2>
             <div class="flex items-center justify-center mb-4">
                 <div id="currentHeight" class="text-6xl font-bold text-blue-600">- cm</div>
             </div>
         </section>
 
-        <section class="bg-white p-6 rounded shadow-md mt-6">
+        <!-- Gráfico de Lecturas -->
+        <section class="bg-white p-6 rounded shadow-md">
+            <h2 class="text-2xl font-semibold mb-4">Gráfico de Alturas</h2>
+            <canvas id="lineChart"></canvas>
+        </section>
+
+        <!-- Historial de Alturas -->
+        <section class="bg-white p-6 rounded shadow-md">
             <h2 class="text-2xl font-semibold mb-4">Historial de Alturas</h2>
             <table class="min-w-full bg-white mb-6">
                 <thead>
@@ -36,28 +44,22 @@
                     <!-- Las filas se agregarán dinámicamente -->
                 </tbody>
             </table>
-            <div class="pagination">
-                <button id="prev" class="bg-blue-500 text-white px-4 py-2 mr-2 disabled:bg-gray-500">Prev</button>
-                <button id="next" class="bg-blue-500 text-white px-4 py-2 disabled:bg-gray-500">Next</button>
+            <div class="pagination flex justify-center space-x-8">
+                <button id="prev" class="bg-blue-500 text-white px-4 py-2 disabled:bg-gray-500">Atrás</button>
+                <button id="next" class="bg-blue-500 text-white px-4 py-2 disabled:bg-gray-500">Siguiente</button>
             </div>
+        </section>
 
-            <!-- Gráfico de línea -->
-            <div class="bg-white p-6 rounded shadow-md mt-6">
-                <h2 class="text-2xl font-semibold mb-4">Gráfico de Lecturas</h2>
-                <canvas id="lineChart"></canvas>
-            </div>
-
-            <!-- Gráfico de barras -->
-            <div class="bg-white p-6 rounded shadow-md mt-6">
-                <h2 class="text-2xl font-semibold mb-4">Distribución de Alturas</h2>
-                <canvas id="barChart"></canvas>
-            </div>
+        <!-- Gráfico de Barras -->
+        <section class="bg-white p-6 rounded shadow-md">
+            <h2 class="text-2xl font-semibold mb-4">Distribución de Alturas</h2>
+            <canvas id="barChart"></canvas>
         </section>
     </main>
 
     <!-- Pie de Página -->
     <footer class="bg-gray-800 text-white p-4 mt-8 text-center">
-        <p>&copy; 2024 Mi Proyecto Arduino. Todos los derechos reservados.</p>
+        <p>&copy; 2024 Skyguard. Todos los derechos reservados.</p>
     </footer>
 
     <script src="./main.js"></script>
