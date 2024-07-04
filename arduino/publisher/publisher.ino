@@ -7,6 +7,7 @@ const char pass[] = SECRET_PASS;
 
 const char server[] = SECRET_URL;
 const char topic[] = SECRET_TOPIC;
+const char alertTopic[] = SECRET_ALERT;
 
 void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived [");
@@ -72,5 +73,9 @@ void loop()
 
     client.publish(topic, message);
     Serial.println(message);
+
+    if (string.toFloat() >= 15) {
+      client.publish(alertTopic, message);
+    }
   }
 }
