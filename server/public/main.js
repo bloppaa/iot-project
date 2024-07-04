@@ -37,7 +37,7 @@ window.onload = async function() {
     // Obtener el último registro de la base de datos
     const response = await fetch('/latest');
     const latestData = await response.json();
-    document.getElementById('currentHeight').textContent = latestData.height === 'No hay alturas registradas' ? latestData.height : `${latestData.height} cm`;
+    document.getElementById('currentHeight').textContent = latestData.height ? `${latestData.height} cm` : 'No hay alturas registradas';
 };
 
 socket.onmessage = function (event) {
@@ -71,6 +71,16 @@ socket.onmessage = function (event) {
     timeCell.textContent = time;
     heightCell.textContent = `${sensorData} cm`;
 
+    // Aplicar color condicional
+    const height = parseFloat(sensorData);
+    if (height < 10) {
+        row.classList.add('green-row');
+    } else if (height >= 10 && height < 15) {
+        row.classList.add('yellow-row');
+    } else {
+        row.classList.add('red-row');
+    }
+
     row.appendChild(dateCell);
     row.appendChild(timeCell);
     row.appendChild(heightCell);
@@ -102,6 +112,16 @@ function updateTable(data) {
         dateCell.textContent = dateTime.toLocaleDateString();
         timeCell.textContent = dateTime.toLocaleTimeString();
         heightCell.textContent = `${item.height} cm`;
+
+        // Aplicar color condicional
+        const height = parseFloat(item.height);
+        if (height < 10) {
+            row.classList.add('green-row');
+        } else if (height >= 10 && height < 15) {
+            row.classList.add('yellow-row');
+        } else {
+            row.classList.add('red-row');
+        }
 
         row.appendChild(dateCell);
         row.appendChild(timeCell);
