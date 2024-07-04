@@ -69,6 +69,17 @@ void loop() {
     lcd.print(maxHeight);
     lcd.print(" cm");
 
+    if (maxHeight < 10) {
+      // Verde
+      setColor(0, 255, 0);
+    } else if (maxHeight < 15) {
+      // Amarillo
+      setColor(255, 215, 0);
+    } else {
+      // Rojo
+      setColor(255, 0, 0);
+    }
+
     maxHeight = 0;
     vehicleDetected = false;
   }
