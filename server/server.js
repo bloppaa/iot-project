@@ -26,12 +26,10 @@ mqttClient.on('message', async (topic, message) => {
   })
 })
 
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', async (req, res) => {
-  res.render('index');
+  res.sendFile(path.join(__dirname, 'index.html'))
 })
 
 app.get('/data', async (req, res) => {

@@ -29,10 +29,15 @@ const config = {
     }
 };
 
-window.onload = function() {
+window.onload = async function() {
     const ctx = document.getElementById('lineChart').getContext('2d');
     window.lineChart = new Chart(ctx, config);
     fetchData();
+
+    // Obtener el último registro de la base de datos
+    const response = await fetch('/latest');
+    const latestData = await response.json();
+    document.getElementById('currentHeight').textContent = latestData.height === 'No hay alturas registradas' ? latestData.height : `${latestData.height} cm`;
 };
 
 socket.onmessage = function (event) {
@@ -51,7 +56,7 @@ socket.onmessage = function (event) {
 
     const tableBody = document.getElementById('historyTable');
     if (tableBody.children.length >= 10) {
-        tableBody.removeChild(tableBody.firstChild);
+        tableBody.removeChild(tableBody.lastChild);
     }
     const row = document.createElement('tr');
     const dateCell = document.createElement('td');
@@ -69,7 +74,7 @@ socket.onmessage = function (event) {
     row.appendChild(dateCell);
     row.appendChild(timeCell);
     row.appendChild(heightCell);
-    tableBody.appendChild(row);
+    tableBody.insertBefore(row, tableBody.firstChild);
 };
 
 let currentPage = 1;
@@ -101,7 +106,7 @@ function updateTable(data) {
         row.appendChild(dateCell);
         row.appendChild(timeCell);
         row.appendChild(heightCell);
-        tableBody.appendChild(row);
+        tableBody.appendChild(row);  // Añadir al final del contenedor
     });
 
     // Habilitar o deshabilitar botones de paginación
