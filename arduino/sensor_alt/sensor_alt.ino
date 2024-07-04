@@ -11,8 +11,17 @@ const int greenPin = 8;
 const int bluePin = 13;
 
 float distanceToGround;
+// Alturas máximas menores a este valor no son consideradas
+const int minThreshold = 5;
+// Alturas máximas mayores a este valor chocarán con el puente
+const int maxThreshold = 15;
+// Alturas máximas mayores a este valor recibirá advertencia
+const int midTreshold = 10;
 
-float previousHeight;
+unsigned long lastDetectionTime = 0;
+const unsigned long detectionInterval = 1000;
+bool vehicleDetected = false;
+
 // Guarda la altura máxima de un vehículo
 float maxHeight = 0;
 
@@ -37,24 +46,33 @@ void loop() {
   float distance = measureDistance();
   float vehicleHeight = distanceToGround - distance;
 
+  unsigned long currentTime = millis();
+
   if (vehicleHeight >= 1) {
-    setColor(255, 0, 0);
     if (vehicleHeight > maxHeight) {
       maxHeight = vehicleHeight;
     }
-  } else if (vehicleHeight < 1 && previousHeight >= 1) {
+
+    if (!vehicleDetected) {
+      vehicleDetected = true;
+    }
+
+    lastDetectionTime = currentTime;
+  } else if (
+    vehicleDetected &&
+    currentTime - lastDetectionTime > detectionInterval &&
+    maxHeight >= minThreshold
+  ) {
     Serial.println(maxHeight);
 
     lcd.setCursor(0, 0);
     lcd.print(maxHeight);
     lcd.print(" cm");
 
-    setColor(0, 0, 0);
-
     maxHeight = 0;
+    vehicleDetected = false;
   }
 
-  previousHeight = vehicleHeight;
   delay(100);
 }
 
