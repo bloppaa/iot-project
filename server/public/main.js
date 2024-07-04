@@ -1,6 +1,6 @@
 const socket = new WebSocket('ws://localhost:3000');
 const labels = [];
-const data = {
+const chartData = {
     labels: labels,
     datasets: [{
         label: 'Altura de Vehículos (cm)',
@@ -14,7 +14,7 @@ const data = {
 
 const config = {
     type: 'line',
-    data: data,
+    data: chartData,
     options: {
         responsive: true,
         plugins: {
@@ -32,12 +32,14 @@ const config = {
 window.onload = async function() {
     const ctx = document.getElementById('lineChart').getContext('2d');
     window.lineChart = new Chart(ctx, config);
-    fetchData();
 
     // Obtener el último registro de la base de datos
     const response = await fetch('/latest');
     const latestData = await response.json();
     document.getElementById('currentHeight').textContent = latestData.height ? `${latestData.height} cm` : 'No hay alturas registradas';
+
+    // Obtener y cargar los datos para la primera página
+    await fetchData();
 };
 
 socket.onmessage = function (event) {
@@ -48,10 +50,10 @@ socket.onmessage = function (event) {
 
     if (labels.length >= 10) {
         labels.shift();
-        data.datasets[0].data.shift();
+        chartData.datasets[0].data.shift();
     }
     labels.push(time);
-    data.datasets[0].data.push(sensorData);
+    chartData.datasets[0].data.push(sensorData);
     window.lineChart.update();
 
     const tableBody = document.getElementById('historyTable');
@@ -89,10 +91,11 @@ socket.onmessage = function (event) {
 
 let currentPage = 1;
 
-function fetchData() {
-    fetch(`/data?page=${currentPage}`)
-        .then(response => response.json())
-        .then(data => updateTable(data));
+async function fetchData() {
+    const response = await fetch(`/data?page=${currentPage}`);
+    const data = await response.json();
+    updateTable(data);
+    updateChart(data);
 }
 
 function updateTable(data) {
@@ -132,6 +135,19 @@ function updateTable(data) {
     // Habilitar o deshabilitar botones de paginación
     document.getElementById('prev').disabled = currentPage === 1;
     document.getElementById('next').disabled = data.length < 10;
+}
+
+function updateChart(data) {
+    labels.length = 0;  // Clear existing labels
+    chartData.datasets[0].data.length = 0;  // Clear existing data
+
+    data.reverse().forEach(item => {
+        const dateTime = new Date(item.timestamp);
+        labels.push(dateTime.toLocaleTimeString());
+        chartData.datasets[0].data.push(item.height);
+    });
+
+    window.lineChart.update();
 }
 
 document.getElementById('prev').addEventListener('click', function() {
