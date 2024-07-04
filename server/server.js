@@ -56,6 +56,25 @@ app.get('/latest', async (req, res) => {
   res.json({ height: latestMessage });
 });
 
+// Nueva ruta para obtener datos agregados
+app.get('/aggregated-data', async (req, res) => {
+  const result = await query('SELECT height FROM vehicle_heights');
+  const heights = result.rows.map(row => row.height);
+  const aggregatedData = { green: 0, yellow: 0, red: 0 };
+
+  heights.forEach(height => {
+    if (height < 10) {
+      aggregatedData.green++;
+    } else if (height >= 10 && height < 15) {
+      aggregatedData.yellow++;
+    } else {
+      aggregatedData.red++;
+    }
+  });
+
+  res.json(aggregatedData);
+});
+
 wss.on('connection', (ws) => {
   ws.send(latestMessage);
 });

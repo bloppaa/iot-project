@@ -29,9 +29,54 @@ const config = {
     }
 };
 
+// Datos y configuración para el gráfico de barras
+const barChartData = {
+    labels: ['< 10 cm', '10 - 15 cm', '> 15 cm'],
+    datasets: [{
+        label: 'Cantidad de Vehículos',
+        data: [0, 0, 0],
+        backgroundColor: [
+            'rgba(72, 187, 120, 0.2)', // Verde
+            'rgba(255, 205, 86, 0.2)', // Amarillo
+            'rgba(255, 99, 132, 0.2)'  // Rojo
+        ],
+        borderColor: [
+            'rgba(72, 187, 120, 1)',
+            'rgba(255, 205, 86, 1)',
+            'rgba(255, 99, 132, 1)'
+        ],
+        borderWidth: 1
+    }]
+};
+
+const barChartConfig = {
+    type: 'bar',
+    data: barChartData,
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        },
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Distribución de Alturas de Vehículos'
+            }
+        }
+    }
+};
+
 window.onload = async function() {
     const ctx = document.getElementById('lineChart').getContext('2d');
     window.lineChart = new Chart(ctx, config);
+
+    const barCtx = document.getElementById('barChart').getContext('2d');
+    window.barChart = new Chart(barCtx, barChartConfig);
 
     // Obtener el último registro de la base de datos
     const response = await fetch('/latest');
@@ -40,6 +85,9 @@ window.onload = async function() {
 
     // Obtener y cargar los datos para la primera página
     await fetchData();
+
+    // Obtener y cargar los datos agregados
+    await fetchAggregatedData();
 };
 
 socket.onmessage = function (event) {
@@ -55,6 +103,8 @@ socket.onmessage = function (event) {
     labels.push(time);
     chartData.datasets[0].data.push(sensorData);
     window.lineChart.update();
+
+    updateBarChart(sensorData);
 
     const tableBody = document.getElementById('historyTable');
     if (tableBody.children.length >= 10) {
@@ -96,6 +146,13 @@ async function fetchData() {
     const data = await response.json();
     updateTable(data);
     updateChart(data);
+}
+
+async function fetchAggregatedData() {
+    const response = await fetch('/aggregated-data');
+    const aggregatedData = await response.json();
+    barChartData.datasets[0].data = [aggregatedData.green, aggregatedData.yellow, aggregatedData.red];
+    window.barChart.update();
 }
 
 function updateTable(data) {
@@ -148,6 +205,18 @@ function updateChart(data) {
     });
 
     window.lineChart.update();
+}
+
+function updateBarChart(sensorData) {
+    const height = parseFloat(sensorData);
+    if (height < 10) {
+        barChartData.datasets[0].data[0]++;
+    } else if (height >= 10 && height < 15) {
+        barChartData.datasets[0].data[1]++;
+    } else {
+        barChartData.datasets[0].data[2]++;
+    }
+    window.barChart.update();
 }
 
 document.getElementById('prev').addEventListener('click', function() {
